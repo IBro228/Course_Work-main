@@ -1,3 +1,5 @@
+   Minesweeper
+
 The Minesweeper's goal 
 is to open empty cells, not to open empty cells. 
 The game starts with the first click on any cell on the field. 
