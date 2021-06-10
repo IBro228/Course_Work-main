@@ -1,7 +1,7 @@
 console.clear();
 
-let size = 10; 
-let bombFrequency = 0.2; 
+let size = 10; // size x size tiles
+let bombFrequency = 0.2; // percentage of bombs
 let tileSize = 50;
 
 const board = document.querySelectorAll('.board')[0];
@@ -11,6 +11,7 @@ let boardSize;
 const restartBtn = document.querySelectorAll('.minesweeper-btn')[0];
 const endscreen = document.querySelectorAll('.endscreen')[0]
 
+// settings
 const boardSizeBtn = document.getElementById('boardSize');
 const tileSizeBtn = document.getElementById('tileSize');
 const difficultyBtns = document.querySelectorAll('.difficulty');
@@ -18,12 +19,13 @@ const difficultyBtns = document.querySelectorAll('.difficulty');
 let bombs = [];
 let numbers = [];
 let numberColors = ['#3498db', '#2ecc71', '#e74c3c', '#9b59b6', '#f1c40f', '#1abc9c', '#34495e', '#7f8c8d',];
-let endscreenContent = {win: '<span>YOU WIN!', loose: 'BOOM!! Game Over!'};
+let endscreenContent = {win: '<span>✔YOU WIN!', loose: '💣BOOM!! Game Over!'};
 
 let gameOver = false;
 
+/* clear board */
 const clear = () => {
-	
+	// console.clear();
 	gameOver = false;
 	bombs = [];
 	numbers = [];
@@ -36,6 +38,7 @@ const clear = () => {
 	setup();
 }
 
+/* setup the game */
 const setup = () => {
 	for (let i = 0; i < Math.pow(size, 2); i++) {
 		const tile = document.createElement('div');
@@ -52,8 +55,10 @@ const setup = () => {
 	let x = 0;
 	let y = 0;
 	tiles.forEach((tile, i) => {
+		// set tile coordinates
 		tile.setAttribute('data-tile', `${x},${y}`);
 		
+		// add bombs
 		let random_boolean = Math.random() < bombFrequency;
 		if (random_boolean) {
 			bombs.push(`${x},${y}`);
@@ -75,11 +80,13 @@ const setup = () => {
 			y++;
 		}
 		
+		/* rightclick */
 		tile.oncontextmenu = function(e) {
 			e.preventDefault();
 			flag(tile);
 		}
 		
+		/* leftclick */
 		tile.addEventListener('click', function(e) {
 			clickTile(tile);
 		});
@@ -95,11 +102,12 @@ const setup = () => {
 }
 
 
+/* flag a tile */
 const flag = (tile) => {
 	if (gameOver) return;
 	if (!tile.classList.contains('tile--checked')) {
 		if (!tile.classList.contains('tile--flagged')) {
-			tile.innerHTML = '!';
+			tile.innerHTML = '🚩';
 			tile.classList.add('tile--flagged');
 			} else {
 			tile.innerHTML = '';
@@ -109,6 +117,7 @@ const flag = (tile) => {
 }
 
 
+/* check if bomb or not */
 const clickTile = (tile) => {
 	if (gameOver) return;
 	if (tile.classList.contains('tile--checked') || tile.classList.contains('tile--flagged')) return;
@@ -116,7 +125,7 @@ const clickTile = (tile) => {
 	if (bombs.includes(coordinate)) {
 		endGame(tile);
 		} else {
-		
+		/* check if nearby bomb */
 		let num = tile.getAttribute('data-num');
 		if (num != null) {
 			tile.classList.add('tile--checked');
@@ -134,14 +143,15 @@ const clickTile = (tile) => {
 }
 
 
-
+/* clicked the right one */
 const checkTile = (tile, coordinate) => {
 	
-	console.log('вњ”');
+	console.log('✔');
 	let coords = coordinate.split(',');
 	let x = parseInt(coords[0]);
 	let y = parseInt(coords[1]);
 	
+	/* check nearby tiles */
 	setTimeout(() => {
 		if (x > 0) {
 			let targetW = document.querySelectorAll(`[data-tile="${x-1},${y}"`)[0];
@@ -181,8 +191,9 @@ const checkTile = (tile, coordinate) => {
 }
 
 
+/* Bomb clicked -> end game */
 const endGame = (tile) => {
-	console.log('Booom! Game over.');
+	console.log('💣 Booom! Game over.');
 	endscreen.innerHTML = endscreenContent.loose;
 	endscreen.classList.add('show');
 	gameOver = true;
@@ -191,7 +202,7 @@ const endGame = (tile) => {
 		if (bombs.includes(coordinate)) {
 			tile.classList.remove('tile--flagged');
 			tile.classList.add('tile--checked', 'tile--bomb');
-			tile.innerHTML = '*';
+			tile.innerHTML = '💣';
 		}
 	});
 }
@@ -209,14 +220,16 @@ const checkVictory = () => {
 	}
 }
 
-
+/* start game */
 setup();
 
+/* click button for new game */
 restartBtn.addEventListener('click', function(e) {
 	e.preventDefault();
 	clear();
 });
 
+// settings
 boardSizeBtn.addEventListener('change', function(e) {
 	console.log(this.value);
 	size = this.value;
